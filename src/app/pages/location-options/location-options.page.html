@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Location:</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button size="medium" fill="outline" (click)="openMap()">
+    Map
+  </ion-button>
+  <ion-button size="medium" fill="outline" (click)="useDeviceLocation()">
+    <ion-icon name="navigate"></ion-icon>
+    Use current location
+  </ion-button>
+</ion-content>

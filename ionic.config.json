@@ -1,0 +1,7 @@
+{
+  "name": "biosphere",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
