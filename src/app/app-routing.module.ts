@@ -37,7 +37,7 @@ const routes: Routes = [
   },
   {
     path: 'visualize-results',
-    loadChildren: () => import('./visualize-results/visualize-results.module').then( m => m.VisualizeResultsPageModule)
+    loadChildren: () => import('./pages/visualize-results/visualize-results.module').then( m => m.VisualizeResultsPageModule)
   }
 ];
 
