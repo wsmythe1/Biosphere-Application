@@ -10,24 +10,31 @@ The Madingley Model is a biodivsersity model of the earth that takes in a pletho
 <br>
 ## Getting Started
 1. Pre-requisites
-    * If you don't already have NPM, you will need to locally run the application. NPM can be downloaded at the following link: [Get NPM!](https://www.npmjs.com/get-npm)
-<br>
+    * If you don't already have NPM, you will need it to locally build the application. NPM can be downloaded at the following link: [Get NPM!](https://www.npmjs.com/get-npm)
+
 2. Clone the repository
     * If unsure where to start, you can begin by cloning the repository by using the terminal to navigate to the desired folder/destination and entering the command: 
+    
     ```
-    $ git://github.com/Applicasa/Sample-App---Android.git
+    $ git clone "https://github.com/gsg62/Biosphere-Application.git"
     ```
+
 3. Install Node Modules
     * cd into the previously cloned directory and run the command:
-    ```npm i```
+    ```
+    $ npm i
+    ```
+
     * this will download all node modules necessary for running the application locally. 
 4. Start the app
     * in the same folder from the previous step, run the command:
     ```
-    ionic serve
+    $ ionic serve
     ```
+
     * this will host the web application version of this app at the address: http://localhost:8100/
     * for iOS and Andriod applcation previews run the command:
     ```
-    ionic lab
+    $ ionic lab
     ```
+
