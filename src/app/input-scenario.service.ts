@@ -33,5 +33,4 @@ export class InputScenarioService {
     console.log('raw data from service: ', data);
     return data;
   }
-
 }

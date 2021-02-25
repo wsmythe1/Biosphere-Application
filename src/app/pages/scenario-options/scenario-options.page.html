@@ -7,22 +7,23 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding display="block">  
-<!-- 
-
-
-  *********************Add scenario opiton input Here********************
-  
-  
-  
-  *********************Add confirm all inputs modal here********************
-
-
--->
-
-<ion-button size="medium" fill="outline" (click)="runSimulation()">
+<ion-content padding display="block">
+  <br>
+  <ion-label color="dark">Choose an scenario:</ion-label>
+  <br>
+  <button mat-button (click)="setScenario('climate')">Climate</button>
+  <br>
+  <button mat-button>Land use</button>
+  <br>
+  <button mat-button>Deforestation</button>
+  <br>
+  <button mat-button>Tropic</button>
+  <br>
+  <button mat-button>Extinctions</button>
+  <br>
+<!-- <ion-button size="large" fill="outline" (click)="runSimulation()">
   <ion-icon name="globe"></ion-icon> 
   Run Simulation
-</ion-button>
+</ion-button> -->
 
 </ion-content>
