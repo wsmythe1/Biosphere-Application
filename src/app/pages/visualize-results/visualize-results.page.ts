@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // for charts
 import { Chart, ChartOptions, ChartType, ChartDataSets } from 'chart.js';
@@ -16,14 +17,13 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 
 @Component
-({
-  selector: 'app-visualize-results',
-  templateUrl: './visualize-results.page.html',
-  styleUrls: ['./visualize-results.page.scss'],
-})
+  ({
+    selector: 'app-visualize-results',
+    templateUrl: './visualize-results.page.html',
+    styleUrls: ['./visualize-results.page.scss'],
+  })
 
-export class VisualizeResultsPage implements OnInit 
-{
+export class VisualizeResultsPage implements OnInit {
   @ViewChild('barChart') barChart;
   @ViewChild('createPDFButton') createPDFButton: ElementRef;
   @ViewChild('downloadButton') downloadButton: ElementRef;
@@ -38,147 +38,148 @@ export class VisualizeResultsPage implements OnInit
   colorArray: any;
   showCreate: boolean;
   showDownload: boolean;
+  scenarioData: any;
 
   pdfObj = null;
   banner = null;
   base64Image = null;
   logoData = null;
-
-  constructor(private navCtrl: NavController, private http: HttpClient, private plt: Platform, private fileOpener: FileOpener) 
-  { 
+  
+  constructor(
+    private navCtrl: NavController,
+    private http: HttpClient,
+    private plt: Platform,
+    private fileOpener: FileOpener,
+    private route: ActivatedRoute, 
+    private router: Router  ) {
     this.showCreate = false;
     this.showDownload = false;
     this.getData(http);
+    this.route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) {
+        this.scenarioData = this.router.getCurrentNavigation().extras.state.scenarioData;
+      }
+    });
   }
 
-  ngOnInit()
-  {
+  ngOnInit() {
     this.loadLocalAssetToBase64();
   }
 
+  // for testing purposes
+  logScenario() {
+    console.log('scenario: ', this.scenarioData);
+  }
 
 
   ///////////////DATA IMPORTATION SECTION//////////////////////////////////////////////////////////
 
-  getData(http: HttpClient)
-  {
+  getData(http: HttpClient) {
     // grab the data from the json file and creates a JSON object
-    this.http.get('../../assets/data/test2.json').toPromise().then(data => 
-      {
-        for( let key in data)
-        {
-          // checks if data has a key
-          if (data.hasOwnProperty(key))
-          {
-            // check if key = latitude, if true then push current data to latitude list
-            if(key == "latitude")
-            {
-              this.latitudes.push(key);
-              this.latitudes.push(data[key]);
-            }
-  
-            // check if key = longitude, if true then push current data to longitude list
-            if(key == "longitude")
-            {
-              this.longitudes.push(key); // key = string
-              this.longitudes.push(data[key]); // data[key] = object
-            }
-            
-            // check if key = values, if true then push current data to longitude list
-            if(key == "essential_biodiversity_column_A")
-            {
-              this.values.push(key); // key = string
-              this.values.push(data[key]); // data[key] = object
-            }
-          } // end of if hasOwnProperty
-        } // end of for loop
+    this.http.get('../../assets/data/test2.json').toPromise().then(data => {
+      for (let key in data) {
+        // checks if data has a key
+        if (data.hasOwnProperty(key)) {
+          // check if key = latitude, if true then push current data to latitude list
+          if (key == "latitude") {
+            this.latitudes.push(key);
+            this.latitudes.push(data[key]);
+          }
 
-        for(let i = 0; i < this.longitudes[1].length; i++)
+          // check if key = longitude, if true then push current data to longitude list
+          if (key == "longitude") {
+            this.longitudes.push(key); // key = string
+            this.longitudes.push(data[key]); // data[key] = object
+          }
+
+          // check if key = values, if true then push current data to longitude list
+          if (key == "essential_biodiversity_column_A") {
+            this.values.push(key); // key = string
+            this.values.push(data[key]); // data[key] = object
+          }
+        } // end of if hasOwnProperty
+      } // end of for loop
+
+      for (let i = 0; i < this.longitudes[1].length; i++) {
+        this.coordinateArray.push(this.latitudes[1][i] + ", " + this.longitudes[1][i]);
+      }
+    });
+  }
+
+  envokeBarChart() {
+    this.createBarChart(this.values, this.coordinateArray);
+
+    this.showCreate = !this.showCreate;
+
+  }
+  ///////////////VISUALIZATION SECTION//////////////////////////////////////////////////////////
+
+  createBarChart(barChartData, barChartLabels) {
+    this.bars = new Chart(this.barChart.nativeElement,
+      {
+        type: 'bar',
+        data:
         {
-          this.coordinateArray.push(this.latitudes[1][i] + ", " + this.longitudes[1][i]);
+          labels: barChartLabels,
+          datasets:
+            [{
+              label: barChartData[0],
+              data: barChartData[1],
+              backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+              borderColor: 'rgb(38, 194, 129)',// array should have same number of elements as number of dataset
+              borderWidth: 1
+            }]
+        },
+        options:
+        {
+          scales:
+          {
+            xAxes:
+              [{
+                scaleLabel:
+                {
+                  display: true,
+                  labelString: this.latitudes[0] + ", " + this.longitudes[0]
+                }
+              }],
+            yAxes:
+              [{
+                scaleLabel:
+                {
+                  display: true,
+                  labelString: barChartData[0]
+                },
+                ticks:
+                {
+                  beginAtZero: true
+                }
+              }],
+          }
         }
       });
   }
 
-  envokeBarChart()
-  {
-    this.createBarChart(this.values, this.coordinateArray);
 
-    this.showCreate = !this.showCreate;
-    
-  }
-///////////////VISUALIZATION SECTION//////////////////////////////////////////////////////////
-
-createBarChart(barChartData, barChartLabels) 
-{
-  this.bars = new Chart(this.barChart.nativeElement, 
-    {
-    type: 'bar',
-    data: 
-    {
-      labels: barChartLabels,
-      datasets: 
-      [{
-        label: barChartData[0],
-        data: barChartData[1],
-        backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-        borderColor: 'rgb(38, 194, 129)',// array should have same number of elements as number of dataset
-        borderWidth: 1
-      }]
-    },
-    options: 
-    {
-      scales: 
-      {
-        xAxes:
-        [{
-          scaleLabel: 
-          {
-            display: true,
-            labelString: this.latitudes[0] + ", " + this.longitudes[0]
-          }
-        }],
-        yAxes: 
-        [{
-          scaleLabel: 
-          {
-            display: true,
-            labelString: barChartData[0]
-          },
-          ticks: 
-          {
-            beginAtZero: true
-          }
-        }],
-      }
-    }
-  });
-}
-
-
-///////////////DATA EXPORTATION SECTION//////////////////////////////////////////////////////////
+  ///////////////DATA EXPORTATION SECTION//////////////////////////////////////////////////////////
 
   // set the image to Base64 so it can be passed through
-  loadLocalAssetToBase64()
-  {
-    this.http.get('./assets/icon/LOGO.png', { responseType: 'blob'})
-    .subscribe(res => 
-    {
-      const reader = new FileReader();
-      reader.onloadend = () => { this.logoData = reader.result; }
-      reader.readAsDataURL(res);
-    });
+  loadLocalAssetToBase64() {
+    this.http.get('./assets/icon/LOGO.png', { responseType: 'blob' })
+      .subscribe(res => {
+        const reader = new FileReader();
+        reader.onloadend = () => { this.logoData = reader.result; }
+        reader.readAsDataURL(res);
+      });
   }
 
   // creates a pdf object (docDefinition) with all of the items to put in the PDF
-  createPDF()
-  {
+  createPDF() {
     const image = this.bars.toBase64Image();
     console.log(image);
-    const docDefinition = 
+    const docDefinition =
     {
       // image logoData is 64Base string
-      content: ['Exportation Text Test!', {image: image, width: 500}]
+      content: ['Exportation Text Test!', { image: image, width: 500 }]
     }
 
     this.pdfObj = pdfMake.createPdf(docDefinition);
@@ -186,31 +187,26 @@ createBarChart(barChartData, barChartLabels)
     this.showDownload = !this.showDownload;
   }
 
-  downloadPDF()
-  {
+  downloadPDF() {
     // if device is mobile (android or iOS)
     // this code was from some dude online, doesn't really work yet
-    if(this.plt.is('cordova'))
-    {
-      this.pdfObj.getBase64(async (data) => 
-      {
-        try
-        {
+    if (this.plt.is('cordova')) {
+      this.pdfObj.getBase64(async (data) => {
+        try {
           let path = `pdf/myletter_${Date.now()}.pdf`;
 
           const result = await Filesystem.writeFile
-          ({
-            path,
-            data: data,
-            directory: FilesystemDirectory.Documents,
-            recursive: true
-          });
+            ({
+              path,
+              data: data,
+              directory: FilesystemDirectory.Documents,
+              recursive: true
+            });
 
           this.fileOpener.open(`${result.uri}`, 'application/pdf');
         }
 
-        catch(e) 
-        {
+        catch (e) {
           console.error('Unable to write file', e)
         }
 
@@ -218,18 +214,16 @@ createBarChart(barChartData, barChartLabels)
     }
 
     // normal web client, can just invoke download()
-    else
-    {
+    else {
       this.pdfObj.download();
     }
   }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
 
   // Navigate back to options
-  backToOptions()
-  {
+  backToOptions() {
     this.navCtrl.navigateForward('/scenario-options');
   }
 }
