@@ -11,6 +11,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FileOpener } from '@ionic-native/file-opener/ngx'
 import { ChartsModule } from 'ng2-charts';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { ChartsModule } from 'ng2-charts';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     FileOpener,
+    Geolocation
     // ModalComponent
   ],
   bootstrap: [AppComponent]
