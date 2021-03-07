@@ -16,6 +16,7 @@ export class LocationOptionsPage implements OnInit {
   lng: any = 0;
   locationSetting: any = " ";
   curlocation: any;
+  showProgress: boolean;
   constructor( private navCtrl: NavController, private geolocation: Geolocation, private router: Router) {
 
   }
@@ -56,15 +57,24 @@ export class LocationOptionsPage implements OnInit {
   }
 
   useDeviceLocation() {
+      // show progress bar after user clicks button
+      this.showProgress = true;
     // user selected current location setting on the location options page
     this.locationSetting = "currentLoc";
     this.openMap();
   }
   selectLocation() {
+      // show progress bar after user clicks button
+      this.showProgress = true;
       // user decided to select the location on the location options page
       this.locationSetting = "selectLoc";
       this.openMap();
   }
-
+  manualLocation() {
+      // show progress bar after user clicks button
+      this.showProgress = true;
+        // user decided to input their own location coordinates on the location options page
+      this.router.navigate(['/manual-coords']);
+    }
 
 }
