@@ -14,6 +14,7 @@ declare var google: any;
 export class LocationOptionsPage implements OnInit {
   lat: any = 0;
   lng: any = 0;
+  locationSetting: any = " ";
   curlocation: any;
   constructor( private navCtrl: NavController, private geolocation: Geolocation, private router: Router) {
 
@@ -25,9 +26,9 @@ export class LocationOptionsPage implements OnInit {
   openMap() {
     this.geolocation.getCurrentPosition().then(
         (location) => {
-          this.lat = location.coords.latitude
+          this.lat = location.coords.latitude;
 
-          this.lng = location.coords.longitude
+          this.lng = location.coords.longitude;
 
           this.curlocation =
               {
@@ -37,13 +38,14 @@ export class LocationOptionsPage implements OnInit {
 
           console.log(this.curlocation.lat);
           console.log(this.curlocation.lng);
-
+          console.log(this.locationSetting);
           const navigationExtras: NavigationExtras =
               {
                 queryParams:
                     {
                       lat: this.lat,
-                      lng: this.lng
+                      lng: this.lng,
+                        locationSetting: this.locationSetting
                     }
               }
           console.log(navigationExtras);
@@ -51,12 +53,17 @@ export class LocationOptionsPage implements OnInit {
 
         }, er =>
         {alert('Error: Please turn on Location Access and try again.'); }).catch((error) => alert('error'));
-    /*this.navCtrl.navigateForward('/map');*/
   }
 
   useDeviceLocation() {
-    // set location stuff here (most-liekly to globabl variables)
-    this.navCtrl.navigateForward('/scenario-options');
+    // user selected current location setting on the location options page
+    this.locationSetting = "currentLoc";
+    this.openMap();
+  }
+  selectLocation() {
+      // user decided to select the location on the location options page
+      this.locationSetting = "selectLoc";
+      this.openMap();
   }
 
 
