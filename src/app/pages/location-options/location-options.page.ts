@@ -50,6 +50,7 @@ export class LocationOptionsPage implements OnInit {
                     }
               }
           console.log(navigationExtras);
+          this.showProgress = false;
           this.router.navigate(['/map'], navigationExtras);
 
         }, er =>
@@ -59,9 +60,9 @@ export class LocationOptionsPage implements OnInit {
   useDeviceLocation() {
       // show progress bar after user clicks button
       this.showProgress = true;
-    // user selected current location setting on the location options page
-    this.locationSetting = "currentLoc";
-    this.openMap();
+    // user selected current location setting on the location options pag
+      this.locationSetting = "currentLoc";
+      this.openMap();
   }
   selectLocation() {
       // show progress bar after user clicks button
@@ -71,8 +72,8 @@ export class LocationOptionsPage implements OnInit {
       this.openMap();
   }
   manualLocation() {
-      // show progress bar after user clicks button
-      this.showProgress = true;
+      // don't show progress bar after user clicks button because it switches really fast
+      this.showProgress = false;
         // user decided to input their own location coordinates on the location options page
       this.router.navigate(['/manual-coords']);
     }
