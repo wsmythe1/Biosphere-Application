@@ -67,7 +67,9 @@ export class MapPage implements OnInit {
       // CHANGE LONG and LAT HERE
       // Get current location
       const location = new google.maps.LatLng(params.lat, params.lng);
-      const options =
+      const locationSetting = params.locationSetting;
+      let areaOfInterest;
+      let options =
           {
             center: location,
 
@@ -75,6 +77,10 @@ export class MapPage implements OnInit {
             zoom: 6,
 
             mapTypeId: 'terrain',
+
+            // Default will not allow the user to move around the map
+            // This is implemented mainly for the current location part
+            gestureHandling: 'none',
 
             // Disable certain parts of the UI so user can't switch to street mode,
             // select the map type, or enter fullscreen mode
@@ -85,18 +91,43 @@ export class MapPage implements OnInit {
             rotateControl: false,
             fullscreenControl: false
           };
+
+      // enters if the user wants to use their current location
+      // the only differences from select location are the map is NOT movable and the circle will NOT be draggable
+      if ( locationSetting === 'currentLoc')
+      {
+        areaOfInterest = new google.maps.Circle({
+          center: location,
+          // default radius, but the user can adjust in the app
+          radius: 100000,
+          editable: true,
+          // current location does NOT allow for user to move circle
+          draggable: false,
+          geodesic: true,
+        });
+      }
+
+      // enters if the current wants to select their location on the map
+      // the only differences from current location are the map IS movable and the circle WILL be draggable
+      else if ( locationSetting === 'selectLoc')
+      {
+        areaOfInterest = new google.maps.Circle({
+          center: location,
+          // default radius, but the user can adjust in the app
+          radius: 100000,
+          editable: true,
+          // current location DOES allow for user to move circle
+          draggable: true,
+          geodesic: true,
+        });
+        // select location allows the user to move around the map
+        options.gestureHandling = 'greedy';
+      }
+
       this.map = new google.maps.Map(this.mapRef.nativeElement, options);
 
-      const areaOfInterest = new google.maps.Circle({
-        center: location,
-        // default radius, but the user can adjust in the app
-        radius: 100000,
-        editable: true,
-        draggable: true,
-        geodesic: false,
-      });
-
       areaOfInterest.setMap(this.map);
+
       const centerControlDiv = document.createElement('div');
       this.submitLocation(centerControlDiv, this.map);
       this.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
