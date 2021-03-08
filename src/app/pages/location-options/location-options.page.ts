@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import {Geolocation} from '@ionic-native/geolocation/ngx';
+import {Router} from '@angular/router';
+import {NavigationExtras} from '@angular/router';
+
+declare var google: any;
 
 @Component({
   selector: 'app-location-options',
@@ -7,16 +12,46 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./location-options.page.scss'],
 })
 export class LocationOptionsPage implements OnInit {
+  lat: any = 0;
+  lng: any = 0;
+  curlocation: any;
+  constructor( private navCtrl: NavController, private geolocation: Geolocation, private router: Router) {
 
-  constructor(
-    private navCtrl: NavController
-  ) { }
+  }
 
   ngOnInit() {
   }
 
   openMap() {
-    this.navCtrl.navigateForward('/map');
+    this.geolocation.getCurrentPosition().then(
+        (location) => {
+          this.lat = location.coords.latitude
+
+          this.lng = location.coords.longitude
+
+          this.curlocation =
+              {
+                lat: this.lat,
+                lng: this.lng
+              };
+
+          console.log(this.curlocation.lat);
+          console.log(this.curlocation.lng);
+
+          const navigationExtras: NavigationExtras =
+              {
+                queryParams:
+                    {
+                      lat: this.lat,
+                      lng: this.lng
+                    }
+              }
+          console.log(navigationExtras);
+          this.router.navigate(['/map'], navigationExtras);
+
+        }, er =>
+        {alert('Error: Please turn on Location Access and try again.'); }).catch((error) => alert('error'));
+    /*this.navCtrl.navigateForward('/map');*/
   }
 
   useDeviceLocation() {

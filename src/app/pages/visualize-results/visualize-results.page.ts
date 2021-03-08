@@ -16,14 +16,13 @@ import * as pdfMake from "pdfmake/build/pdfmake";
 declare var google: any;
 
 @Component
-({
-  selector: 'app-visualize-results',
-  templateUrl: './visualize-results.page.html',
-  styleUrls: ['./visualize-results.page.scss'],
-})
+  ({
+    selector: 'app-visualize-results',
+    templateUrl: './visualize-results.page.html',
+    styleUrls: ['./visualize-results.page.scss'],
+  })
 
-export class VisualizeResultsPage implements OnInit 
-{
+export class VisualizeResultsPage implements OnInit {
   @ViewChild('barChart') barChart;
   @ViewChild('lineChart') lineChart;
   @ViewChild('createPDFButton') createPDFButton: ElementRef;
@@ -62,6 +61,7 @@ export class VisualizeResultsPage implements OnInit
   colorArray: any;
   showCreate: boolean;
   showDownload: boolean;
+  scenarioData: any;
 
   height = 0;
 
@@ -89,6 +89,11 @@ export class VisualizeResultsPage implements OnInit
     this.showCreate = false;
     this.showDownload = false;
     this.getData(http);
+    this.route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) {
+        this.scenarioData = this.router.getCurrentNavigation().extras.state.scenarioData;
+      }
+    });
   }
 
   ngOnInit()
@@ -203,8 +208,7 @@ export class VisualizeResultsPage implements OnInit
 
   ///////////////DATA IMPORTATION SECTION//////////////////////////////////////////////////////////
 
-  getData(http: HttpClient)
-  {
+  getData(http: HttpClient) {
     // grab the data from the json file and creates a JSON object
     this.http.get('../../assets/data/BigOutput-Random.json').toPromise().then(data => 
       {
@@ -309,7 +313,26 @@ createBarChart(graphData, barChartLabels)
           },
           ticks: 
           {
-            beginAtZero: true
+            xAxes:
+              [{
+                scaleLabel:
+                {
+                  display: true,
+                  labelString: this.latitudes[0] + ", " + this.longitudes[0]
+                }
+              }],
+            yAxes:
+              [{
+                scaleLabel:
+                {
+                  display: true,
+                  labelString: barChartData[0]
+                },
+                ticks:
+                {
+                  beginAtZero: true
+                }
+              }],
           }
         }],
       }
@@ -365,11 +388,10 @@ createBarChart(graphData, barChartLabels)
   }
   */
   // creates a pdf object (docDefinition) with all of the items to put in the PDF
-  createPDF()
-  {
+  createPDF() {
     const image = this.bars.toBase64Image();
     console.log(image);
-    const docDefinition = 
+    const docDefinition =
     {
       // image logoData is 64Base string
       content: ['Bar Graph of', this.EBV1Values[0] ,/* "and ", this.BValues[0] , */{image: image, width: 500}]
@@ -380,31 +402,26 @@ createBarChart(graphData, barChartLabels)
     this.showDownload = true;
   }
 
-  downloadPDF()
-  {
+  downloadPDF() {
     // if device is mobile (android or iOS)
     // this code was from some dude online, doesn't really work yet
-    if(this.plt.is('cordova'))
-    {
-      this.pdfObj.getBase64(async (data) => 
-      {
-        try
-        {
+    if (this.plt.is('cordova')) {
+      this.pdfObj.getBase64(async (data) => {
+        try {
           let path = `pdf/myletter_${Date.now()}.pdf`;
 
           const result = await Filesystem.writeFile
-          ({
-            path,
-            data: data,
-            directory: FilesystemDirectory.Documents,
-            recursive: true
-          });
+            ({
+              path,
+              data: data,
+              directory: FilesystemDirectory.Documents,
+              recursive: true
+            });
 
           this.fileOpener.open(`${result.uri}`, 'application/pdf');
         }
 
-        catch(e) 
-        {
+        catch (e) {
           console.error('Unable to write file', e)
         }
 
@@ -412,18 +429,16 @@ createBarChart(graphData, barChartLabels)
     }
 
     // normal web client, can just invoke download()
-    else
-    {
+    else {
       this.pdfObj.download();
     }
   }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
 
   // Navigate back to options
-  backToOptions()
-  {
+  backToOptions() {
     this.navCtrl.navigateForward('/scenario-options');
   }
 }
