@@ -5,30 +5,24 @@
 </ion-header>
 
 <ion-content>
- 
   <ion-button size="medium" fill="outline" (click)="backToOptions()">
     <ion-icon name="arrow-back"></ion-icon>
     Go back to scenario options  
 </ion-button>
 
-
-<div *ngFor="let latitude of latitudes"> 
-  {{latitude}}
+<!--Possible Buttons for Heatmap
+<div id="floating-panel">
+  <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+  <button onclick="changeGradient()">Change gradient</button>
+  <button onclick="changeRadius()">Change radius</button>
+  <button onclick="changeOpacity()">Change opacity</button>
 </div>
-
-<div *ngFor="let longitude of longitudes"> 
-  {{longitude}}
-</div>
-
-<div *ngFor="let value of values"> 
-  {{value}}
-</div>
-
-<ion-card-content>
-  <canvas #barChart></canvas>
-</ion-card-content>
+-->
 
 <br>
+<ion-button (click)="initMap()" color="primary">
+  Show Map
+</ion-button>
 
 <ion-button (click)="envokeBarChart()" color="primary">
   Create Graph
@@ -41,6 +35,33 @@
 <ion-button #downloadButton *ngIf="showDownload" (click)="downloadPDF()" color="tertiary">
   Download PDF
 </ion-button>
+
+<div #map id='map'></div>
+
+<div *ngFor="let latitude of latitudes"> 
+  {{latitude}}
+</div>
+
+<div *ngFor="let longitude of longitudes"> 
+  {{longitude}}
+</div>
+
+<br>
+
+<div *ngFor="let AValues of AValues"> 
+  {{AValues}}
+</div>
+
+<br>
+
+<div *ngFor="let BValues of BValues"> 
+  {{BValues}}
+</div>
+
+<ion-card-content>
+  <canvas #barChart></canvas>
+  <canvas #lineChart></canvas>
+</ion-card-content>
 
 <!--
 <table class = "data-table" border="5" text-center>
@@ -58,6 +79,7 @@
       <ion-input type="text" [(ngModel)]="csvData[i][j]"></ion-input>
     </td>
   </tr>
-</table>-->
+</table>
+-->
 
 </ion-content>
