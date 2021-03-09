@@ -8,10 +8,8 @@ import { VisualizeResultsPageRoutingModule } from './visualize-results-routing.m
 import { ChartsModule } from 'ng2-charts';
 import { VisualizeResultsPage } from "./visualize-results.page";
 
-@NgModule
-({
-  imports: 
-  [
+@NgModule({
+  imports: [
     CommonModule,
     FormsModule,
     IonicModule,
